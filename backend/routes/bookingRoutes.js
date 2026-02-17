@@ -5,12 +5,14 @@ const {
   getAllBookings,
   updateBookingStatus,
   getBookingsByUser,
-  getBookingsByResource
+  getBookingsByResource,
+  deleteBooking
 } = require('../controllers/bookingController');
 
 router.post('/', createBooking);
 router.get('/', getAllBookings);
 router.put('/:id', updateBookingStatus);
+router.delete('/:id', deleteBooking);
 router.get('/user/:userId', getBookingsByUser);
 router.get('/resource/:resourceId', getBookingsByResource);
 

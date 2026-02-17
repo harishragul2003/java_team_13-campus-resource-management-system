@@ -3,11 +3,16 @@ const db = require('../config/db');
 // Create new user
 exports.createUser = async (req, res) => {
   try {
-    const { name, email, phone, role, status = 'ACTIVE' } = req.body;
+    const { name, email, phone, role, status = 'ACTIVE', password = 'password123', registerId } = req.body;
 
     // Validation
     if (!name || !email || !phone || !role) {
       return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Validate phone number (must be exactly 10 digits)
+    if (!/^\d{10}$/.test(phone)) {
+      return res.status(400).json({ message: 'Phone must be exactly 10 digits' });
     }
 
     if (!['STUDENT', 'STAFF'].includes(role)) {
@@ -19,11 +24,11 @@ exports.createUser = async (req, res) => {
     }
 
     const [result] = await db.query(
-      'INSERT INTO users (name, email, phone, role, status) VALUES (?, ?, ?, ?, ?)',
-      [name, email, phone, role, status]
+      'INSERT INTO users (name, email, phone, role, status, password, registerId) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [name, email, phone, role, status, password, registerId || null]
     );
 
-    const [newUser] = await db.query('SELECT * FROM users WHERE id = ?', [result.insertId]);
+    const [newUser] = await db.query('SELECT id, name, email, phone, role, status, registerId, createdAt FROM users WHERE id = ?', [result.insertId]);
     
     res.status(201).json(newUser[0]);
   } catch (error) {
@@ -98,6 +103,10 @@ exports.updateUser = async (req, res) => {
       values.push(email);
     }
     if (phone) {
+      // Validate phone number (must be exactly 10 digits)
+      if (!/^\d{10}$/.test(phone)) {
+        return res.status(400).json({ message: 'Phone must be exactly 10 digits' });
+      }
       updates.push('phone = ?');
       values.push(phone);
     }

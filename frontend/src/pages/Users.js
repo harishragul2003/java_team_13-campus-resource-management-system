@@ -11,7 +11,8 @@ function Users() {
     email: '',
     phone: '',
     role: 'STUDENT',
-    status: 'ACTIVE'
+    status: 'ACTIVE',
+    password: 'password123'
   });
   const [editingId, setEditingId] = useState(null);
 
@@ -79,7 +80,8 @@ function Users() {
       email: '',
       phone: '',
       role: 'STUDENT',
-      status: 'ACTIVE'
+      status: 'ACTIVE',
+      password: 'password123'
     });
     setEditingId(null);
     setShowForm(false);
@@ -124,13 +126,24 @@ function Users() {
             </div>
 
             <div className="form-group">
-              <label>Phone</label>
+              <label>Phone (10 digits)</label>
               <input
                 type="tel"
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                  if (value.length <= 10) {
+                    setForm({ ...form, phone: value });
+                  }
+                }}
+                pattern="[0-9]{10}"
+                maxLength="10"
+                placeholder="Enter 10 digit phone number"
                 required
               />
+              {form.phone && form.phone.length !== 10 && (
+                <small style={{ color: 'red' }}>Phone must be exactly 10 digits</small>
+              )}
             </div>
 
             <div className="form-group">
