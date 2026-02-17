@@ -6,33 +6,33 @@ This implementation plan breaks down the Campus Resource Management System into 
 
 ## Tasks
 
-- [-] 1. Initialize project structure and dependencies
+- [x] 1. Initialize project structure and dependencies
   - Create backend directory with package.json (express, mysql2, dotenv, cors, nodemon)
   - Create frontend directory using Create React App
   - Set up .gitignore files for both frontend and backend
   - Initialize Git repository with initial commit
   - _Requirements: 9.1, 9.2, 9.3, 10.1, 10.4_
 
-- [ ] 2. Set up MySQL database and connection
-  - [ ] 2.1 Create database schema with SQL script
+- [x] 2. Set up MySQL database and connection
+  - [x] 2.1 Create database schema with SQL script
     - Write SQL CREATE TABLE statements for users, resources, and bookings tables
     - Include all constraints (PRIMARY KEY, FOREIGN KEY, UNIQUE, ENUM, DEFAULT)
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7_
   
-  - [ ] 2.2 Implement database connection configuration
+  - [x] 2.2 Implement database connection configuration
     - Create backend/config/db.js with MySQL connection pool
     - Create .env file with database credentials (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, PORT)
     - Test connection on server startup
     - _Requirements: 9.2, 9.3_
 
-- [ ] 3. Implement User Management backend
-  - [ ] 3.1 Create user routes and controller structure
+- [x] 3. Implement User Management backend
+  - [x] 3.1 Create user routes and controller structure
     - Create backend/routes/userRoutes.js with route definitions
     - Create backend/controllers/userController.js with function stubs
     - Wire routes to controller functions
     - _Requirements: 5.6, 5.7, 9.1_
   
-  - [ ] 3.2 Implement createUser controller function
+  - [x] 3.2 Implement createUser controller function
     - Extract and validate request body fields (name, email, phone, role, status)
     - Execute INSERT query with parameterized values
     - Handle unique constraint violation (duplicate email) with 409 status
@@ -47,7 +47,7 @@ This implementation plan breaks down the Campus Resource Management System into 
     - **Property 2: User creation completeness**
     - **Validates: Requirements 1.1, 1.3, 1.6**
   
-  - [ ] 3.5 Implement getAllUsers and getUserById controller functions
+  - [x] 3.5 Implement getAllUsers and getUserById controller functions
     - Implement getAllUsers with optional status query parameter filtering
     - Implement getUserById with 404 handling for non-existent users
     - Return 200 with data or appropriate error status
@@ -57,7 +57,7 @@ This implementation plan breaks down the Campus Resource Management System into 
     - **Property 8: User status filtering**
     - **Validates: Requirements 1.11**
   
-  - [ ] 3.7 Implement updateUser and deleteUser controller functions
+  - [x] 3.7 Implement updateUser and deleteUser controller functions
     - Implement updateUser with partial field updates
     - Implement deleteUser with 404 handling
     - Return appropriate status codes
@@ -69,14 +69,14 @@ This implementation plan breaks down the Campus Resource Management System into 
     - Test deleting non-existent user returns 404
     - _Requirements: 1.2, 1.8, 1.10_
 
-- [ ] 4. Implement Resource Management backend
-  - [ ] 4.1 Create resource routes and controller
+- [x] 4. Implement Resource Management backend
+  - [x] 4.1 Create resource routes and controller
     - Create backend/routes/resourceRoutes.js with route definitions
     - Create backend/controllers/resourceController.js with function implementations
     - Wire routes to controller functions
     - _Requirements: 5.6, 5.7_
   
-  - [ ] 4.2 Implement all resource CRUD operations
+  - [x] 4.2 Implement all resource CRUD operations
     - Implement createResource with validation (capacity > 0, valid type/status enums)
     - Implement getAllResources
     - Implement updateResource with 404 handling
@@ -89,14 +89,14 @@ This implementation plan breaks down the Campus Resource Management System into 
     - **Property 12: Resource capacity validation**
     - **Validates: Requirements 2.3, 2.4, 2.5**
 
-- [ ] 5. Implement Booking Management backend with double-booking prevention
-  - [ ] 5.1 Create booking routes and controller structure
+- [x] 5. Implement Booking Management backend with double-booking prevention
+  - [x] 5.1 Create booking routes and controller structure
     - Create backend/routes/bookingRoutes.js with all route definitions
     - Create backend/controllers/bookingController.js with function stubs
     - Wire routes to controller functions
     - _Requirements: 5.6, 5.7_
   
-  - [ ] 5.2 Implement createBooking with double-booking validation
+  - [x] 5.2 Implement createBooking with double-booking validation
     - Extract and validate request body (userId, resourceId, bookingDate, timeSlot)
     - Query database for existing booking with same resourceId, bookingDate, timeSlot
     - If exists, return 409 with "Resource already booked" error message
@@ -114,7 +114,7 @@ This implementation plan breaks down the Campus Resource Management System into 
     - **Property 14: Booking foreign key integrity (resourceId)**
     - **Validates: Requirements 3.3, 3.4**
   
-  - [ ] 5.5 Implement remaining booking operations
+  - [x] 5.5 Implement remaining booking operations
     - Implement getAllBookings with JOIN to include user and resource details
     - Implement updateBookingStatus with status validation
     - Implement getBookingsByUser
@@ -127,7 +127,7 @@ This implementation plan breaks down the Campus Resource Management System into 
     - Test creating duplicate booking returns 409
     - _Requirements: 3.3, 3.4, 4.1_
 
-- [ ] 6. Set up Express server and middleware
+- [x] 6. Set up Express server and middleware
   - Create backend/server.js with Express app initialization
   - Configure middleware (express.json(), cors())
   - Register all route modules (/api/users, /api/resources, /api/bookings)
@@ -142,22 +142,22 @@ This implementation plan breaks down the Campus Resource Management System into 
   - Verify foreign key constraints are enforced
   - Verify error responses have correct status codes and messages
 
-- [ ] 8. Implement React frontend structure and routing
-  - [ ] 8.1 Set up React Router and navigation
+- [x] 8. Implement React frontend structure and routing
+  - [x] 8.1 Set up React Router and navigation
     - Install react-router-dom and axios
     - Create App.js with BrowserRouter and Routes
     - Define routes: /users, /resources, /bookings
     - Add navigation menu/header component
     - _Requirements: 8.1, 8.2, 8.3_
   
-  - [ ] 8.2 Create page component files
+  - [x] 8.2 Create page component files
     - Create src/pages/Users.js with basic structure
     - Create src/pages/Resources.js with basic structure
     - Create src/pages/Bookings.js with basic structure
     - _Requirements: 9.4_
 
-- [ ] 9. Implement Users page and UserForm component
-  - [ ] 9.1 Implement Users.js page
+- [x] 9. Implement Users page and UserForm component
+  - [x] 9.1 Implement Users.js page
     - Add state for users array, loading, error
     - Fetch users from GET /api/users on component mount
     - Display users in table with columns: name, email, phone, role, status
@@ -166,7 +166,7 @@ This implementation plan breaks down the Campus Resource Management System into 
     - Implement delete functionality with confirmation
     - _Requirements: 8.1, 8.4, 8.6, 8.7, 8.8_
   
-  - [ ] 9.2 Create UserForm.js component
+  - [x] 9.2 Create UserForm.js component
     - Add form fields: name, email, phone, role (dropdown), status (dropdown)
     - Implement form validation (all fields required, email format)
     - Handle form submission (POST for create, PUT for update)
@@ -174,8 +174,8 @@ This implementation plan breaks down the Campus Resource Management System into 
     - Add Cancel button to close form
     - _Requirements: 8.4, 8.6, 8.8_
 
-- [ ] 10. Implement Resources page
-  - [ ] 10.1 Implement Resources.js page with CRUD operations
+- [x] 10. Implement Resources page
+  - [x] 10.1 Implement Resources.js page with CRUD operations
     - Add state for resources array, loading, error, form visibility
     - Fetch resources from GET /api/resources on mount
     - Display resources in table: name, type, capacity, status
@@ -185,8 +185,8 @@ This implementation plan breaks down the Campus Resource Management System into 
     - Implement delete with confirmation
     - _Requirements: 8.2, 8.6, 8.7, 8.8_
 
-- [ ] 11. Implement Bookings page and BookingForm component
-  - [ ] 11.1 Implement Bookings.js page
+- [x] 11. Implement Bookings page and BookingForm component
+  - [x] 11.1 Implement Bookings.js page
     - Add state for bookings array, loading, error
     - Fetch bookings from GET /api/bookings on mount
     - Display bookings in table: user name, resource name, date, time slot, status
@@ -195,7 +195,7 @@ This implementation plan breaks down the Campus Resource Management System into 
     - Implement status update functionality (PUT /api/bookings/:id)
     - _Requirements: 8.3, 8.6, 8.7, 8.8_
   
-  - [ ] 11.2 Create BookingForm.js component
+  - [x] 11.2 Create BookingForm.js component
     - Fetch users and resources for dropdown options on mount
     - Add form fields: userId (dropdown), resourceId (dropdown), bookingDate (date input), timeSlot (text input)
     - Implement form validation (all fields required)

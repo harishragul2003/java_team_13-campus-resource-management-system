@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const {
+  createBooking,
+  getAllBookings,
+  updateBookingStatus,
+  getBookingsByUser,
+  getBookingsByResource
+} = require('../controllers/bookingController');
 
-// Placeholder routes - will be implemented in controller
-router.post('/', (req, res) => res.status(501).json({ message: 'Not implemented' }));
-router.get('/', (req, res) => res.status(501).json({ message: 'Not implemented' }));
-router.put('/:id', (req, res) => res.status(501).json({ message: 'Not implemented' }));
-router.get('/user/:userId', (req, res) => res.status(501).json({ message: 'Not implemented' }));
-router.get('/resource/:resourceId', (req, res) => res.status(501).json({ message: 'Not implemented' }));
+router.post('/', createBooking);
+router.get('/', getAllBookings);
+router.put('/:id', updateBookingStatus);
+router.get('/user/:userId', getBookingsByUser);
+router.get('/resource/:resourceId', getBookingsByResource);
 
 module.exports = router;
