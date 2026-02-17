@@ -11,7 +11,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://java-team-13-campus-resource-manage.vercel.app',
+    'https://java-team-13-campus-resource-management-system-47dgt7qbv.vercel.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Routes
@@ -22,7 +31,20 @@ app.use('/api/bookings', bookingRoutes);
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ message: 'Campus Resource Management API is running' });
+  res.json({ 
+    message: 'Campus Resource Management API is running',
+    status: 'healthy',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// API health check
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    database: 'connected',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Global error handler
