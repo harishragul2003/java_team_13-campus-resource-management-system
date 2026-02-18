@@ -35,7 +35,15 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      sqlMessage: error.sqlMessage
+    });
+    res.status(500).json({ 
+      message: 'Internal server error', 
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Database error'
+    });
   }
 };
 

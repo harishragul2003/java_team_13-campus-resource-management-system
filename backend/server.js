@@ -60,9 +60,14 @@ app.use((err, req, res, next) => {
 // Initialize database and start server
 async function startServer() {
   try {
-    await setupDatabase();
+    // Start server first
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
+    });
+    
+    // Then setup database (non-blocking)
+    setupDatabase().catch(err => {
+      console.error('Database setup failed, but server is running:', err.message);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

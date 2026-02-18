@@ -3,6 +3,9 @@ const db = require('./db');
 async function setupDatabase() {
   try {
     console.log('🔧 Setting up database tables...');
+    
+    // Wait a bit for database connection to be ready
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Create users table
     await db.query(`
@@ -79,7 +82,8 @@ async function setupDatabase() {
     console.log('🎉 Database setup completed successfully!');
   } catch (error) {
     console.error('❌ Error setting up database:', error.message);
-    throw error;
+    console.log('⚠️  Continuing without database setup - tables may need manual creation');
+    // Don't throw error, allow server to start
   }
 }
 
