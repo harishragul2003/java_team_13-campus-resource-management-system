@@ -22,6 +22,20 @@ async function setupDatabase() {
       )
     `);
     console.log('✅ Users table created/verified');
+    
+    // Add registerId column if it doesn't exist (for existing databases)
+    try {
+      await db.query(`
+        ALTER TABLE users ADD COLUMN registerId VARCHAR(50)
+      `);
+      console.log('✅ Added registerId column to users table');
+    } catch (err) {
+      if (err.code === 'ER_DUP_FIELDNAME') {
+        console.log('✅ registerId column already exists');
+      } else {
+        console.log('⚠️  Could not add registerId column:', err.message);
+      }
+    }
 
     // Create resources table
     await db.query(`
@@ -50,6 +64,20 @@ async function setupDatabase() {
       )
     `);
     console.log('✅ Bookings table created/verified');
+    
+    // Add rejectionReason column if it doesn't exist
+    try {
+      await db.query(`
+        ALTER TABLE bookings ADD COLUMN rejectionReason TEXT
+      `);
+      console.log('✅ Added rejectionReason column to bookings table');
+    } catch (err) {
+      if (err.code === 'ER_DUP_FIELDNAME') {
+        console.log('✅ rejectionReason column already exists');
+      } else {
+        console.log('⚠️  Could not add rejectionReason column:', err.message);
+      }
+    }
 
     // Check if admin exists, if not create one
     const [adminCheck] = await db.query('SELECT * FROM users WHERE email = ?', ['admin@campus.com']);
