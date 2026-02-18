@@ -43,7 +43,7 @@ exports.createBooking = async (req, res) => {
 
       // CRITICAL: Check for double-booking on each day (only APPROVED bookings block slots)
       const [existingBookings] = await db.query(
-        'SELECT * FROM bookings WHERE resource_id = ? AND booking_date = ? AND time_slot = ? AND status = ?',
+        'SELECT * FROM bookings WHERE resourceId = ? AND bookingDate = ? AND timeSlot = ? AND status = ?',
         [resourceId, dateString, timeSlot, 'APPROVED']
       );
 
@@ -55,7 +55,7 @@ exports.createBooking = async (req, res) => {
 
       // Create booking for this day
       const [result] = await db.query(
-        'INSERT INTO bookings (user_id, resource_id, booking_date, time_slot, status) VALUES (?, ?, ?, ?, ?)',
+        'INSERT INTO bookings (userId, resourceId, bookingDate, timeSlot, status) VALUES (?, ?, ?, ?, ?)',
         [userId, resourceId, dateString, timeSlot, status]
       );
       
@@ -105,29 +105,21 @@ exports.getAllBookings = async (req, res) => {
         r.name as resourceName,
         r.type as resourceType
       FROM bookings b
-      LEFT JOIN users u ON b.user_id = u.id
-      LEFT JOIN resources r ON b.resource_id = r.id
+      LEFT JOIN users u ON b.userId = u.id
+      LEFT JOIN resources r ON b.resourceId = r.id
     `);
     
-    // Map snake_case to camelCase for frontend
-    const mappedBookings = bookings.map(booking => ({
-      id: booking.id,
-      userId: booking.user_id,
-      resourceId: booking.resource_id,
-      bookingDate: booking.booking_date,
-      timeSlot: booking.time_slot,
-      status: booking.status,
-      rejectionReason: booking.rejection_reason,
-      userName: booking.userName,
-      userEmail: booking.userEmail,
-      resourceName: booking.resourceName,
-      resourceType: booking.resourceType
-    }));
-    
-    res.status(200).json(mappedBookings);
+    // Return as-is since database already uses camelCase
+    res.status(200).json(bookings);
   } catch (error) {
     console.error('Error fetching bookings:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      sqlMessage: error.sqlMessage,
+      sql: error.sql
+    });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
@@ -150,9 +142,9 @@ exports.updateBookingStatus = async (req, res) => {
 
     // Update status and rejection reason
     if (status === 'REJECTED' && rejectionReason) {
-      await db.query('UPDATE bookings SET status = ?, rejection_reason = ? WHERE id = ?', [status, rejectionReason, id]);
+      await db.query('UPDATE bookings SET status = ?, rejectionReason = ? WHERE id = ?', [status, rejectionReason, id]);
     } else {
-      await db.query('UPDATE bookings SET status = ?, rejection_reason = NULL WHERE id = ?', [status, id]);
+      await db.query('UPDATE bookings SET status = ?, rejectionReason = NULL WHERE id = ?', [status, id]);
     }
 
     const [updatedBooking] = await db.query('SELECT * FROM bookings WHERE id = ?', [id]);
@@ -165,8 +157,8 @@ exports.updateBookingStatus = async (req, res) => {
         u.email as userEmail,
         r.name as resourceName
       FROM bookings b
-      LEFT JOIN users u ON b.user_id = u.id
-      LEFT JOIN resources r ON b.resource_id = r.id
+      LEFT JOIN users u ON b.userId = u.id
+      LEFT JOIN resources r ON b.resourceId = r.id
       WHERE b.id = ?
     `, [id]);
     
@@ -210,24 +202,11 @@ exports.getBookingsByUser = async (req, res) => {
         r.name as resourceName,
         r.type as resourceType
       FROM bookings b
-      LEFT JOIN resources r ON b.resource_id = r.id
-      WHERE b.user_id = ?
+      LEFT JOIN resources r ON b.resourceId = r.id
+      WHERE b.userId = ?
     `, [userId]);
 
-    // Map snake_case to camelCase
-    const mappedBookings = bookings.map(booking => ({
-      id: booking.id,
-      userId: booking.user_id,
-      resourceId: booking.resource_id,
-      bookingDate: booking.booking_date,
-      timeSlot: booking.time_slot,
-      status: booking.status,
-      rejectionReason: booking.rejection_reason,
-      resourceName: booking.resourceName,
-      resourceType: booking.resourceType
-    }));
-
-    res.status(200).json(mappedBookings);
+    res.status(200).json(bookings);
   } catch (error) {
     console.error('Error fetching user bookings:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -245,24 +224,11 @@ exports.getBookingsByResource = async (req, res) => {
         u.name as userName,
         u.email as userEmail
       FROM bookings b
-      LEFT JOIN users u ON b.user_id = u.id
-      WHERE b.resource_id = ?
+      LEFT JOIN users u ON b.userId = u.id
+      WHERE b.resourceId = ?
     `, [resourceId]);
 
-    // Map snake_case to camelCase
-    const mappedBookings = bookings.map(booking => ({
-      id: booking.id,
-      userId: booking.user_id,
-      resourceId: booking.resource_id,
-      bookingDate: booking.booking_date,
-      timeSlot: booking.time_slot,
-      status: booking.status,
-      rejectionReason: booking.rejection_reason,
-      userName: booking.userName,
-      userEmail: booking.userEmail
-    }));
-
-    res.status(200).json(mappedBookings);
+    res.status(200).json(bookings);
   } catch (error) {
     console.error('Error fetching resource bookings:', error);
     res.status(500).json({ message: 'Internal server error' });
