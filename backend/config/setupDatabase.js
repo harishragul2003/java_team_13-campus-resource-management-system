@@ -25,16 +25,20 @@ async function setupDatabase() {
     
     // Add registerId column if it doesn't exist (for existing databases)
     try {
-      await db.query(`
-        ALTER TABLE users ADD COLUMN registerId VARCHAR(50)
-      `);
+      await db.query(`ALTER TABLE users ADD COLUMN registerId VARCHAR(50)`);
       console.log('✅ Added registerId column to users table');
     } catch (err) {
       if (err.code === 'ER_DUP_FIELDNAME') {
         console.log('✅ registerId column already exists');
-      } else {
-        console.log('⚠️  Could not add registerId column:', err.message);
       }
+    }
+    
+    // Modify role enum to include ADMIN if needed
+    try {
+      await db.query(`ALTER TABLE users MODIFY COLUMN role ENUM('STUDENT', 'STAFF', 'ADMIN') NOT NULL`);
+      console.log('✅ Updated role enum to include ADMIN');
+    } catch (err) {
+      console.log('⚠️  Could not update role enum:', err.message);
     }
 
     // Create resources table
@@ -49,33 +53,29 @@ async function setupDatabase() {
     `);
     console.log('✅ Resources table created/verified');
 
-    // Create bookings table
+    // Create bookings table with snake_case columns (matching controller)
     await db.query(`
       CREATE TABLE IF NOT EXISTS bookings (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        userId INT NOT NULL,
-        resourceId INT NOT NULL,
-        bookingDate DATE NOT NULL,
-        timeSlot VARCHAR(50) NOT NULL,
+        user_id INT NOT NULL,
+        resource_id INT NOT NULL,
+        booking_date DATE NOT NULL,
+        time_slot VARCHAR(50) NOT NULL,
         status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
-        rejectionReason TEXT,
-        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (resourceId) REFERENCES resources(id) ON DELETE CASCADE
+        rejection_reason TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE CASCADE
       )
     `);
     console.log('✅ Bookings table created/verified');
     
-    // Add rejectionReason column if it doesn't exist
+    // Add rejection_reason column if it doesn't exist
     try {
-      await db.query(`
-        ALTER TABLE bookings ADD COLUMN rejectionReason TEXT
-      `);
-      console.log('✅ Added rejectionReason column to bookings table');
+      await db.query(`ALTER TABLE bookings ADD COLUMN rejection_reason TEXT`);
+      console.log('✅ Added rejection_reason column to bookings table');
     } catch (err) {
       if (err.code === 'ER_DUP_FIELDNAME') {
-        console.log('✅ rejectionReason column already exists');
-      } else {
-        console.log('⚠️  Could not add rejectionReason column:', err.message);
+        console.log('✅ rejection_reason column already exists');
       }
     }
 
