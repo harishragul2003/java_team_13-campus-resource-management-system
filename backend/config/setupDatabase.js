@@ -91,6 +91,25 @@ async function setupDatabase() {
     } else {
       console.log('✅ Admin user already exists');
     }
+    
+    // Create sample student and staff users
+    const [studentCheck] = await db.query('SELECT * FROM users WHERE email = ?', ['student@campus.com']);
+    if (studentCheck.length === 0) {
+      await db.query(
+        'INSERT INTO users (name, email, phone, role, status, password, registerId) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        ['John Doe', 'student@campus.com', '1234567890', 'STUDENT', 'ACTIVE', 'student123', '2024001']
+      );
+      console.log('✅ Sample student created (student@campus.com / student123)');
+    }
+    
+    const [staffCheck] = await db.query('SELECT * FROM users WHERE email = ?', ['staff@campus.com']);
+    if (staffCheck.length === 0) {
+      await db.query(
+        'INSERT INTO users (name, email, phone, role, status, password, registerId) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        ['Jane Smith', 'staff@campus.com', '9876543210', 'STAFF', 'ACTIVE', 'staff123', 'STF001']
+      );
+      console.log('✅ Sample staff created (staff@campus.com / staff123)');
+    }
 
     // Check if resources exist, if not create sample resources
     const [resourceCheck] = await db.query('SELECT * FROM resources');
