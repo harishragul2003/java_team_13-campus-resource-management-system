@@ -9,47 +9,25 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Email, password, and user type are required' });
     }
 
-    let user = null;
-    let role = userType;
-
-    if (userType === 'ADMIN') {
-      // Check admin table
-      const [admins] = await db.query(
-        'SELECT * FROM admins WHERE email = ? AND password = ?',
-        [email, password]
-      );
-      
-      if (admins.length > 0) {
-        user = {
-          id: admins[0].id,
-          name: admins[0].name,
-          email: admins[0].email,
-          role: 'ADMIN',
-          username: admins[0].username
-        };
-      }
-    } else {
-      // Check users table for STUDENT or STAFF
-      const [users] = await db.query(
-        'SELECT * FROM users WHERE email = ? AND password = ? AND role = ? AND status = ?',
-        [email, password, userType, 'ACTIVE']
-      );
-      
-      if (users.length > 0) {
-        user = {
-          id: users[0].id,
-          name: users[0].name,
-          email: users[0].email,
-          phone: users[0].phone,
-          role: users[0].role,
-          status: users[0].status
-        };
-      }
-    }
-
-    if (!user) {
+    // Check users table for all user types (STUDENT, STAFF, ADMIN)
+    const [users] = await db.query(
+      'SELECT * FROM users WHERE email = ? AND password = ? AND role = ? AND status = ?',
+      [email, password, userType, 'ACTIVE']
+    );
+    
+    if (users.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials or inactive account' });
     }
+
+    const user = {
+      id: users[0].id,
+      name: users[0].name,
+      email: users[0].email,
+      phone: users[0].phone,
+      role: users[0].role,
+      status: users[0].status,
+      registerId: users[0].registerId
+    };
 
     res.status(200).json({
       message: 'Login successful',
@@ -57,7 +35,7 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
@@ -70,40 +48,26 @@ exports.getCurrentUser = async (req, res) => {
       return res.status(400).json({ message: 'User ID and type required' });
     }
 
-    let user = null;
-
-    if (userType === 'ADMIN') {
-      const [admins] = await db.query('SELECT * FROM admins WHERE id = ?', [userId]);
-      if (admins.length > 0) {
-        user = {
-          id: admins[0].id,
-          name: admins[0].name,
-          email: admins[0].email,
-          role: 'ADMIN',
-          username: admins[0].username
-        };
-      }
-    } else {
-      const [users] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
-      if (users.length > 0) {
-        user = {
-          id: users[0].id,
-          name: users[0].name,
-          email: users[0].email,
-          phone: users[0].phone,
-          role: users[0].role,
-          status: users[0].status
-        };
-      }
-    }
-
-    if (!user) {
+    // Get user from users table (works for all user types)
+    const [users] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+    
+    if (users.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    const user = {
+      id: users[0].id,
+      name: users[0].name,
+      email: users[0].email,
+      phone: users[0].phone,
+      role: users[0].role,
+      status: users[0].status,
+      registerId: users[0].registerId
+    };
 
     res.status(200).json(user);
   } catch (error) {
     console.error('Get user error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
