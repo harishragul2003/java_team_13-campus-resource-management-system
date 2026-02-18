@@ -109,7 +109,22 @@ exports.getAllBookings = async (req, res) => {
       LEFT JOIN resources r ON b.resource_id = r.id
     `);
     
-    res.status(200).json(bookings);
+    // Map snake_case to camelCase for frontend
+    const mappedBookings = bookings.map(booking => ({
+      id: booking.id,
+      userId: booking.user_id,
+      resourceId: booking.resource_id,
+      bookingDate: booking.booking_date,
+      timeSlot: booking.time_slot,
+      status: booking.status,
+      rejectionReason: booking.rejection_reason,
+      userName: booking.userName,
+      userEmail: booking.userEmail,
+      resourceName: booking.resourceName,
+      resourceType: booking.resourceType
+    }));
+    
+    res.status(200).json(mappedBookings);
   } catch (error) {
     console.error('Error fetching bookings:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -199,7 +214,20 @@ exports.getBookingsByUser = async (req, res) => {
       WHERE b.user_id = ?
     `, [userId]);
 
-    res.status(200).json(bookings);
+    // Map snake_case to camelCase
+    const mappedBookings = bookings.map(booking => ({
+      id: booking.id,
+      userId: booking.user_id,
+      resourceId: booking.resource_id,
+      bookingDate: booking.booking_date,
+      timeSlot: booking.time_slot,
+      status: booking.status,
+      rejectionReason: booking.rejection_reason,
+      resourceName: booking.resourceName,
+      resourceType: booking.resourceType
+    }));
+
+    res.status(200).json(mappedBookings);
   } catch (error) {
     console.error('Error fetching user bookings:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -221,7 +249,20 @@ exports.getBookingsByResource = async (req, res) => {
       WHERE b.resource_id = ?
     `, [resourceId]);
 
-    res.status(200).json(bookings);
+    // Map snake_case to camelCase
+    const mappedBookings = bookings.map(booking => ({
+      id: booking.id,
+      userId: booking.user_id,
+      resourceId: booking.resource_id,
+      bookingDate: booking.booking_date,
+      timeSlot: booking.time_slot,
+      status: booking.status,
+      rejectionReason: booking.rejection_reason,
+      userName: booking.userName,
+      userEmail: booking.userEmail
+    }));
+
+    res.status(200).json(mappedBookings);
   } catch (error) {
     console.error('Error fetching resource bookings:', error);
     res.status(500).json({ message: 'Internal server error' });
