@@ -53,29 +53,29 @@ async function setupDatabase() {
     `);
     console.log('✅ Resources table created/verified');
 
-    // Create bookings table with snake_case columns (matching controller)
+    // Create bookings table with camelCase columns (matching existing database)
     await db.query(`
       CREATE TABLE IF NOT EXISTS bookings (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        resource_id INT NOT NULL,
-        booking_date DATE NOT NULL,
-        time_slot VARCHAR(50) NOT NULL,
+        userId INT NOT NULL,
+        resourceId INT NOT NULL,
+        bookingDate DATE NOT NULL,
+        timeSlot VARCHAR(50) NOT NULL,
         status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
-        rejection_reason TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE CASCADE
+        rejectionReason TEXT,
+        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (resourceId) REFERENCES resources(id) ON DELETE CASCADE
       )
     `);
     console.log('✅ Bookings table created/verified');
     
-    // Add rejection_reason column if it doesn't exist
+    // Add rejectionReason column if it doesn't exist
     try {
-      await db.query(`ALTER TABLE bookings ADD COLUMN rejection_reason TEXT`);
-      console.log('✅ Added rejection_reason column to bookings table');
+      await db.query(`ALTER TABLE bookings ADD COLUMN rejectionReason TEXT`);
+      console.log('✅ Added rejectionReason column to bookings table');
     } catch (err) {
       if (err.code === 'ER_DUP_FIELDNAME') {
-        console.log('✅ rejection_reason column already exists');
+        console.log('✅ rejectionReason column already exists');
       }
     }
 
